@@ -18,6 +18,7 @@ model User {
   password String
   projects ProjectUsers[]
   tasks TaskUsers[]
+  comments TaskComments[]
 }
 
 model ProjectUsers{
@@ -51,6 +52,9 @@ model TaskComments {
   content String
   taskId Int
   task Task @relation(references: [taskId], fields: [taskId])
+  userId Int
+  user User @relation(references: [userId], fields: [userId])
+  postedAt DateTime @default(now())
 }
 
 model TaskUsers {

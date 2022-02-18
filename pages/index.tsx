@@ -13,9 +13,9 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <div className="container">
+        <div className="container text-center">
           <h1>Simple Project Manager</h1>
-          <div className="text-center">
+          <div className="text-center mb-3">
             <Link href="/login"><a className="btn btn-primary">Login</a></Link>
           </div>
           <div className="text-center">
