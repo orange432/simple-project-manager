@@ -27,7 +27,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       include: {
         tasks: {
           include: {
-            comments: true
+            comments: {
+              include: {
+                user: {
+                  select: {
+                    displayName: true,
+                    username: true
+                  }
+                }
+              }
+            }
           }
         },
         users: {

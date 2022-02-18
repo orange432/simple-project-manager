@@ -2,17 +2,10 @@ import { prisma } from "../../prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 import { authorize } from "../../controllers/sessions";
 
-type Body = {
-  title: string;
-  status: number;
-  projectId: number;
-  assignedUsers: any;
-}
-
 // Creates a task
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { title, status, projectId, assignedUsers }: Body = req.body
-  if(!title || !projectId || !assignedUsers) return res.json({success: false, error: "Missing task title or project id."})
+  const { title, status, projectId, assignedUsers, taskId } = req.body
+  if(!title || !projectId || !assignedUsers || !taskId) return res.json({success: false, error: "Missing field."})
 
   const [user, error]:any = await authorize(req,res)
   if(error) return res.json({success: false, error, code: 1})
@@ -25,12 +18,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     ]}})
     if (!isInProject) return res.json({success: false, error: "You are not part of this project."})
 
-    // Create the task
-    let task = await prisma.task.create({data: {
+    // Update the task
+    let task = await prisma.task.update({data: {
       title,
       status,
       projectId
-    }})
+    }, where: {taskId}})
+
+    // Remove unassigned users
+    await prisma.taskUsers.deleteMany({where: {taskId}})
 
     let warnings = [];
     // Add assigned users to task

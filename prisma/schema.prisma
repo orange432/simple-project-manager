@@ -51,6 +51,7 @@ model TaskComments {
   commentId Int @id @default(autoincrement())
   content String
   taskId Int
+  variant String @default("light")
   task Task @relation(references: [taskId], fields: [taskId])
   userId Int
   user User @relation(references: [userId], fields: [userId])
