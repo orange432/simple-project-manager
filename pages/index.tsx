@@ -12,11 +12,15 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
+      <main className={styles.main}>
         <div className="container">
           <h1>Simple Project Manager</h1>
-          <Link href="/login"><a className="btn btn-primary">Login</a></Link>
-          <Link href="/register"><a className="btn btn-primary">Register</a></Link>
+          <div className="text-center">
+            <Link href="/login"><a className="btn btn-primary">Login</a></Link>
+          </div>
+          <div className="text-center">
+            <Link href="/register"><a className="btn btn-secondary">Register</a></Link>
+          </div>
         </div>
       </main>
 

@@ -6,16 +6,14 @@ import { NextApiRequest, NextApiResponse } from "next"
 // authorize checks if a user is logged in and is valid
 export const authorize = async (req: NextApiRequest,res) => {
   const token = cookie.parse(req.headers.cookie).jwt;
+  let decoded;
   try{
-    jwt.verify(token,process.env.JWT_SECRET)
+    decoded = jwt.verify(token,process.env.JWT_SECRET)
   }catch(err){
-    res.authorized = false;
     return [null, "Invalid token, please log in."]
   }
-  res.authorized = true;
 
-  let { payload }: any = jwt.decode(token);
-  let userId = payload.userId;
+  let userId = decoded.userId;
   // Create the token
   try{
     jwt.sign({userId},process.env.JWT_SECRET,{
@@ -34,9 +32,8 @@ export const authorize = async (req: NextApiRequest,res) => {
   }))
 
   // Get user info
-  let user;
   try{
-    user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: {userId},
       select: {
         userId: true,

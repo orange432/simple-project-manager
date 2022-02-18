@@ -7,6 +7,7 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "license": "MIT",
   "dependencies": {
     "@prisma/client": "^3.9.2",
     "bcrypt": "^5.0.1",
@@ -15,8 +16,10 @@
     "jsonwebtoken": "^8.5.1",
     "next": "12.0.10",
     "react": "17.0.2",
+    "react-bootstrap": "^2.1.2",
     "react-dom": "17.0.2",
-    "react-toastify": "^8.2.0"
+    "react-toastify": "^8.2.0",
+    "sass": "^1.49.8"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
