@@ -10,30 +10,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }catch(err){
     return res.json({success: false, error: "Invalid Token, please log in", code: 1})
   }
-  const { id } = req.query
   try{
     const { payload }: any = jwt.decode(token); 
-    let link = await prisma.projectUsers.findFirst({
-      where: {userId: payload.userId, projectId: +id}
-    })
-    if(!link) return res.json({success:false, error: "You are not part of this project."})
-  }catch(err){
-    res.json({success:false, error: "Database error.  Please refresh the page."})
-  }
-  try{
-    let project = await prisma.project.findUnique({
-      where: {projectId: +id},
+    let projects = await prisma.projectUsers.findMany({
+      where: {userId: payload.userId},
       include: {
-        tasks: {
-          include: {
-            comments: true
+        project: {
+          select: {
+            name: true,
+            projectId: true
           }
         }
       }
     })
-    res.json({success: true, project})
+    res.json({projects, success: true})
   }catch(err){
-    console.log(err)
     res.json({success:false, error: "Database error.  Please refresh the page."})
   }
 }

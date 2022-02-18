@@ -13,8 +13,11 @@ datasource db {
 model User {
   userId Int @id @default(autoincrement())
   username String @unique
+  email String @unique
+  displayName String
   password String
   projects ProjectUsers[]
+  tasks TaskUsers[]
 }
 
 model ProjectUsers{
@@ -28,8 +31,6 @@ model ProjectUsers{
 model Project {
   projectId Int @id @default(autoincrement())
   name String
-
-  public Boolean
   users ProjectUsers[]
   tasks Task[]
 }
@@ -40,4 +41,22 @@ model Task {
   status Int
   projectId Int
   project Project @relation(references: [projectId], fields: [projectId])
+  users TaskUsers[]
+  comments TaskComments[]
+}
+
+model TaskComments {
+  commentId Int @id @default(autoincrement())
+  content String
+  taskId Int
+  task Task @relation(references: [taskId], fields: [taskId])
+}
+
+model TaskUsers {
+  taskId Int
+  task Task @relation(references: [taskId], fields: [taskId])
+  userId Int
+  user User @relation(references: [userId],fields: [userId])
+
+  @@id([taskId, userId])
 }
