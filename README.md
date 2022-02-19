@@ -5,3 +5,4 @@ A simple project manager.
 - React
 - Next.js
 - Prisma
+- React Bootstrap

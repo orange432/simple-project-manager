@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken"
 import cookie from 'cookie'
 
+// Loads a list of projects
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const token = cookie.parse(req.headers.cookie || "").jwt
   let decoded;
