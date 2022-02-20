@@ -21,7 +21,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             task: {
               include: {
                 users: {
-                  include: {user: true}
+                  include: {user: {
+                    select: {
+                      userId: true,
+                      username: true,
+                      displayName: true
+                    }
+                  }}
                 },
                 project:{
                   select: {

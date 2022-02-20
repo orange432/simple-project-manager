@@ -21,6 +21,7 @@ const Task: React.FC<Props> = (props) => {
     <Card
       bg={props.variant}
       text={(props.variant==="light")?"dark":"white"}
+      className="m-1"
     >
       <Card.Header>Task - <ButtonGroup>
         <Button variant="secondary" onClick={props.openComments}>Comments</Button>

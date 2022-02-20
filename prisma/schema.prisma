@@ -51,6 +51,7 @@ model Task {
   taskId Int @id @default(autoincrement())
   title String
   status Int
+  createdAt DateTime @default(now())
   projectId Int
   project Project @relation(references: [projectId], fields: [projectId])
   users TaskUsers[]

@@ -6,6 +6,7 @@ import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button';
 import Nav from "react-bootstrap/Nav"
 import Link from 'next/link';
+import { format, formatDistance } from 'date-fns';
 
 export default function Home() {
   const [show, setShow] = useState(false);
@@ -16,6 +17,7 @@ export default function Home() {
   const [name, setName] = useState("")
   const [inviteCount, setInviteCount] = useState<number>()
   const [messageCount, setMessageCount] = useState(0)
+  const [sortState, setSortState] = useState([0,0,0,0,0])
 
   useEffect(()=>{
     getTasks()
@@ -38,6 +40,117 @@ export default function Home() {
       }
       setLoading(false)
     })
+  }
+
+  const sortTable = (column: number) =>{
+    switch(column){
+      case 0:
+        if(sortState[column]){
+          // Swap state
+          let flip = sortState
+          flip[column] = 0
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.task.project.name < b.task.project.name) return -1
+            if(a.task.project.name > b.task.project.name) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }else{
+          let flip = sortState
+          flip[column] = 1
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.task.project.name > b.task.project.name) return -1
+            if(a.task.project.name < b.task.project.name) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }
+        break;
+      case 1:
+        if(sortState[column]){
+          // Swap state
+          let flip = sortState
+          flip[column] = 0
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.task.title < b.task.title) return -1
+            if(a.task.title > b.task.title) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }else{
+          let flip = sortState
+          flip[column] = 1
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.task.title > b.task.title) return -1
+            if(a.task.title < b.task.title) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }
+        break;
+      case 2:
+        if(sortState[column]){
+          // Swap state
+          let flip = sortState
+          flip[column] = 0
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.task.status < b.task.status) return -1
+            if(a.task.status > b.task.status) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }else{
+          let flip = sortState
+          flip[column] = 1
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.task.status > b.task.status) return -1
+            if(a.task.status < b.task.status) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }
+        break
+      case 4:
+        if(sortState[column]){
+          // Swap state
+          let flip = sortState
+          flip[column] = 0
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.task.createdAt < b.task.createdAt) return -1
+            if(a.task.createdAt > b.task.createdAt) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }else{
+          let flip = sortState
+          flip[column] = 1
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.task.createdAt > b.task.createdAt) return -1
+            if(a.task.createdAt < b.task.createdAt) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }
+        break;
+      case 3:
+        break;
+    }
   }
 
   if (loading) return <Loading/>
@@ -75,10 +188,11 @@ export default function Home() {
           <table className="table">
             <thead>
               <tr>
-                <th>Project</th>
-                <th>Task</th>
-                <th>Status</th>
+                <th style={{cursor: "pointer"}} onClick={()=>sortTable(0)}>Project</th>
+                <th style={{cursor: "pointer"}} onClick={()=>sortTable(1)}>Task</th>
+                <th style={{cursor: "pointer"}} onClick={()=>sortTable(2)}>Status</th>
                 <th>Assigned Users</th>
+                <th style={{cursor: "pointer"}} onClick={()=>sortTable(4)}>Created</th>
               </tr>
             </thead>
             <tbody>
@@ -97,6 +211,7 @@ export default function Home() {
                   'Complete' 
                   }</td>
                   <td>{task.users.map(({user})=>(<span key={user.userId}>{user.displayName}  </span>))}</td>
+                  <td>{formatDistance(new Date(task.createdAt), new Date(), {addSuffix: true})} ({format(new Date(task.createdAt),"dd/MM/yyyy")})</td>
                 </tr>
               ))}            
             </tbody>

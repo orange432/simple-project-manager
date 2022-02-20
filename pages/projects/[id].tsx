@@ -51,6 +51,7 @@ export default function Home() {
   const [rename, setRename] = useState("")
 
   const [tableView, setTableView] = useState(false)
+  const [sortState,setSortState] = useState([0,0,0,0])
   useEffect(()=>{ 
     refreshComments(currentTaskId)
   },[project.tasks])
@@ -288,7 +289,115 @@ export default function Home() {
     })
   }
 
-
+  const sortTable = (column: number) => {
+    switch(column){
+      case 0:
+        if(sortState[column]){
+          // Swap state
+          let flip = sortState
+          flip[column] = 0
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.title < b.title) return -1
+            if(a.title > b.title) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }else{
+          let flip = sortState
+          flip[column] = 1
+          setSortState(flip);
+          let sorted = [...tasks]
+          console.log(sorted)
+          sorted.sort((a,b)=>{
+            if(a.title > b.title) return -1
+            if(a.title < b.title) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }
+        break;
+      case 1:
+        if(sortState[column]){
+          // Swap state
+          let flip = sortState
+          flip[column] = 0
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.status < b.status) return -1
+            if(a.status > b.status) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }else{
+          let flip = sortState
+          flip[column] = 1
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.status > b.status) return -1
+            if(a.status < b.status) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }
+        break;
+      case 2:
+        if(sortState[column]){
+          // Swap state
+          let flip = sortState
+          flip[column] = 0
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.users.findIndex(({user})=>user.userId===userId) < b.users.findIndex(({user})=>user.userId===userId)) return -1
+            if(a.users.findIndex(({user})=>user.userId===userId) > b.users.findIndex(({user})=>user.userId===userId)) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }else{
+          let flip = sortState
+          flip[column] = 1
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.users.findIndex(({user})=>user.userId===userId) > b.users.findIndex(({user})=>user.userId===userId)) return -1
+            if(a.users.findIndex(({user})=>user.userId===userId) < b.users.findIndex(({user})=>user.userId===userId)) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }
+        break;
+      case 3:
+        if(sortState[column]){
+          // Swap state
+          let flip = sortState
+          flip[column] = 0
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.comments.length < b.comments.length) return -1
+            if(a.comments.length > b.comments.length) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }else{
+          let flip = sortState
+          flip[column] = 1
+          setSortState(flip);
+          let sorted = [...tasks]
+          sorted.sort((a,b)=>{
+            if(a.comments.length > b.comments.length) return -1
+            if(a.comments.length < b.comments.length) return 1;
+            return 0
+          })
+          setTasks(sorted);
+        }
+        break;
+    }
+  }
 
   useEffect(()=>{
     if(router.isReady){
@@ -302,10 +411,10 @@ export default function Home() {
       <Table>
         <thead>
           <tr>
-            <th>Task</th>
-            <th>Status</th>
-            <th>Assigned?</th>
-            <th>Comment(s)</th>
+            <th style={{cursor: "pointer"}} onClick={()=>sortTable(0)}>Task</th>
+            <th style={{cursor: "pointer"}} onClick={()=>sortTable(1)}>Status</th>
+            <th style={{cursor: "pointer"}} onClick={()=>sortTable(2)}>Assigned?</th>
+            <th style={{cursor: "pointer"}} onClick={()=>sortTable(3)}>Comment(s)</th>
             <th>Controls</th>
           </tr>
         </thead>
@@ -313,10 +422,10 @@ export default function Home() {
           {tasks.map((task)=>(
             <tr 
             key={task.taskId}
-            className={(task.status===1)?"table-light":(task.status===2)?"table-info":(task.status===3)?"table-warning":"table-success"}
+            
             >
               <td>{task.title}</td>
-              <td>
+              <td className={(task.status===1)?"table-light":(task.status===2)?"table-info":(task.status===3)?"table-warning":"table-success"}>
                 {(task.status===1)?
                 'Not Started'
                 :(task.status===2)?
