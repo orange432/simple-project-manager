@@ -3,9 +3,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken"
 import cookie from 'cookie'
 
-// Updates a users display name
+// Updates a users email
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { displayName } = req.body
+  const { email } = req.body
   const token = cookie.parse(req.headers.cookie || "").jwt
   let decoded;
   try{
@@ -14,10 +14,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.json({success: false, error: "Invalid Token, please log in", code: 1})
   }
   try{
-    // Update displlay name
+    // Update email
     await prisma.user.update({
       where: { userId: decoded.userId },
-      data: { displayName }
+      data: { email }
     })
     res.json({success: true})
   }catch(err){

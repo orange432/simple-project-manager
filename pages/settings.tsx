@@ -29,6 +29,8 @@ export default function Home() {
   const [displayName, setDisplayName] = useState("")
 
   const [messageCount,setMessageCount] = useState(0)
+  
+  const [email, setEmail] = useState("")
 
   useEffect(()=>{
     getSettings()
@@ -90,6 +92,28 @@ export default function Home() {
     .then(data=>{
       if(data.success){
         toast.success("Display name updated!")
+      }else{
+        toast.error(data.error)
+      }
+      setLoading(false)
+    })
+  }
+
+  const changeEmail = (event: FormEvent) => {
+    event.preventDefault()
+    setLoading(true)
+    fetch("/api/settings/change-email",{
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({email})
+    })
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.success){
+        toast.success("Email updated!")
       }else{
         toast.error(data.error)
       }
@@ -203,6 +227,17 @@ export default function Home() {
           </Form.Group>
           <Button type="submit" variant="primary">Update Display Name</Button>
         </Form>
+
+        <Form onSubmit={changeEmail}>
+          <h4 className="mt-4">Change Email</h4>
+          <Form.Group className="mb-3">
+            <Form.Label>New Email</Form.Label>
+            <Form.Control type="email" required onChange={e=>setEmail(e.target.value)}/>
+          </Form.Group>
+          <Button type="submit" variant="primary">Update Email</Button>
+        </Form>
+
+
         <h4 className="mt-4">Blocked Users</h4>
         <p>Users blocked from messaging and inviting you</p>
         <Form onSubmit={blockUser}>

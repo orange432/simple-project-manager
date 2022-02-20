@@ -5,7 +5,9 @@ import { NextApiRequest, NextApiResponse } from "next"
 
 // authorize checks if a user is logged in and is valid
 export const authorize = async (req: NextApiRequest,res) => {
-  const token = cookie.parse(req.headers.cookie).jwt;
+  const token = cookie.parse(req.headers.cookie || "").jwt;
+  console.log(token)
+  if(!token) return [null, "No token, please log in."]
   let decoded;
   try{
     decoded = jwt.verify(token,process.env.JWT_SECRET)
@@ -44,6 +46,7 @@ export const authorize = async (req: NextApiRequest,res) => {
     })
     return [user, null]
   }catch(err){
+    console.log(err)
     return [null, "Database error, please try again."]
   }
 }

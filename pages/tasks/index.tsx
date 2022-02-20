@@ -28,7 +28,6 @@ export default function Home() {
     .then(data=>{
       if(data?.code == 1) return window.location.href = "/login"
       if(data.success){
-        console.log(data)
         setProjects(data.projects)
         setTasks(data.tasks.tasks)
         setInviteCount(data.inviteCount)

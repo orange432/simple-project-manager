@@ -40,10 +40,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           {receiverId: decoded.userId},
           {markAsRead: false}
         ]
-        
       }
     })
-    res.json({projects, success: true, inviteCount, messageCount})
+    
+    // Get user details
+    let user = await prisma.user.findUnique({
+      where: {userId: decoded.userId},
+      select: {
+        username: true,
+        displayName: true
+      }
+    })
+    res.json({projects, success: true, inviteCount, messageCount, user})
   }catch(err){
     console.log(err);
     res.json({success:false, error: "Database error.  Please refresh the page."})

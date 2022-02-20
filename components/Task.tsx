@@ -13,14 +13,13 @@ interface Props {
     title: string,
     comments: any
   }
-  userId: number
+  userId: number,
 }
 
 const Task: React.FC<Props> = (props) => {
   return (
     <Card
       bg={props.variant}
-      key={props.task.taskId}
       text={(props.variant==="light")?"dark":"white"}
     >
       <Card.Header>Task - <ButtonGroup>

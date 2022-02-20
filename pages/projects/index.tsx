@@ -14,6 +14,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [projects, setProjects] = useState([]);
   const [userId, setUserId] = useState<number>()
+  const [username, setUsername] = useState("")
+  const [displayName, setDisplayName] = useState("")
   const [name, setName] = useState("")
   
   const [messageCount, setMessageCount] = useState(0)
@@ -33,6 +35,8 @@ export default function Home() {
         setProjects(data.projects)
         setInviteCount(data.inviteCount)
         setMessageCount(data.messageCount)
+        setUsername(data.user.username)
+        setDisplayName(data.user.displayName)
         setUserId(data.userId)
       }else{
         toast.error(data.error);
@@ -98,7 +102,9 @@ export default function Home() {
             </Nav.Item>
           </Nav>
           <h1>Projects</h1>
+          <p>Hello, {displayName} ({username})</p>
           <Button type="button" variant="primary" onClick={()=>setShow(true)}>Create Project</Button>
+
           <table className="table">
             <thead>
               <tr>
@@ -114,7 +120,7 @@ export default function Home() {
                 <tr key={project.projectId}>
                   <td>{project.projectId}</td>
                   <td><Link href={`/projects/${project.projectId}`}><a>{project.name}</a></Link></td>
-                  <td>{project?.users.map(({user})=>(<><span style={{textDecoration: "underline"}} key={user.userId}>{user.displayName}</span>&nbsp;</>))}</td>
+                  <td>{project?.users.map(({user},i)=>(<span key={i}><span style={{textDecoration: "underline"}}>{user.displayName}</span>&nbsp;</span>))}</td>
                   <td>{formatDistance(new Date(project.createdAt), new Date(), {addSuffix: true})} ({format(new Date(project.createdAt),"dd/MM/yyyy")})</td>
                 </tr>
               ))}            
