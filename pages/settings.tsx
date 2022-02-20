@@ -86,7 +86,7 @@ export default function Home() {
     .then(r=>r.json())
     .then(data=>{
       if(data.success){
-        toast.success("Password updated!")
+        toast.success("Display name updated!")
       }else{
         toast.error(data.error)
       }
@@ -152,7 +152,7 @@ export default function Home() {
 
       <main>
         <div className="container">
-        <Nav variant="pills" defaultActiveKey="/settings">
+        <Nav className="justify-content-center" variant="pills" defaultActiveKey="/settings">
             <Nav.Item>
               <Nav.Link href="/projects">Projects</Nav.Link>
             </Nav.Item>
@@ -174,7 +174,7 @@ export default function Home() {
         
 
         <Form onSubmit={changePassword}>
-          <h4>Change Password</h4>
+          <h4 className="mt-4">Change Password</h4>
           <Form.Group className="mb-3">
             <Form.Label>Current Password</Form.Label>
             <Form.Control type="password" required onChange={e=>setCurrentPassword(e.target.value)}/>
@@ -191,14 +191,14 @@ export default function Home() {
         </Form>
 
         <Form onSubmit={changeDisplayName}>
-          <h4>Change Display Name</h4>
+          <h4 className="mt-4">Change Display Name</h4>
           <Form.Group className="mb-3">
             <Form.Label>New Display Name</Form.Label>
             <Form.Control type="text" required onChange={e=>setDisplayName(e.target.value)}/>
           </Form.Group>
           <Button type="submit" variant="primary">Update Display Name</Button>
         </Form>
-        <h3>Blocked Users</h3>
+        <h4 className="mt-4">Blocked Users</h4>
         <p>Users blocked from inviting you</p>
         <Form onSubmit={blockUser}>
         <Form.Group className="mb-3">

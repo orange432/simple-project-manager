@@ -50,7 +50,7 @@ export default function Home() {
 
       <main>
         <div className="container">
-          <Nav variant="pills" defaultActiveKey="/tasks">
+          <Nav className="justify-content-center" variant="pills" defaultActiveKey="/tasks">
             <Nav.Item>
               <Nav.Link href="/projects">Projects</Nav.Link>
             </Nav.Item>
@@ -67,8 +67,7 @@ export default function Home() {
               <Nav.Link href="/logout">Logout</Nav.Link>
             </Nav.Item>
           </Nav>
-          <h1>Projects</h1>
-          <Button type="button" variant="primary" onClick={()=>setShow(true)}>Create Project</Button>
+          <h1>Tasks</h1>
           <table className="table">
             <thead>
               <tr>

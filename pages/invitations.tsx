@@ -89,7 +89,7 @@ export default function Home() {
 
       <main>
         <div className="container">
-        <Nav variant="pills" defaultActiveKey="/invitations">
+        <Nav className="justify-content-center" variant="pills" defaultActiveKey="/invitations">
             <Nav.Item>
               <Nav.Link href="/projects">Projects</Nav.Link>
             </Nav.Item>

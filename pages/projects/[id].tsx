@@ -45,7 +45,10 @@ export default function Home() {
 
   const [showAddUser, setShowAddUser] = useState(false)
   const [username, setUsername] = useState("")
-  useEffect(()=>{
+
+  const [showRename, setShowRename] = useState(false)
+  const [rename, setRename] = useState("")
+  useEffect(()=>{ 
     refreshComments(currentTaskId)
   },[project.tasks])
 
@@ -234,6 +237,29 @@ export default function Home() {
       setLoading(false)
     })
   }
+  
+  const renameProject = () => {
+    const { id } = router.query
+    setLoading(true);
+    fetch("/api/rename-project",{
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({projectId: +id,rename})
+    })
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.success){
+        toast.success("Project renamed!")
+        setShowRename(false)
+      }else{
+        toast.error(data.error)
+      }
+      setLoading(false)
+    })
+  }
 
   useEffect(()=>{
     if(router.isReady){
@@ -258,6 +284,10 @@ export default function Home() {
               <Button onClick={()=>setShow(true)}  variant="secondary">New Task</Button>
               <Button onClick={()=>loadProject()} variant="secondary">Refresh</Button>
               <Button onClick={()=>setShowAddUser(true)} variant="secondary">Invite User</Button>
+              {(userId===project.ownerId)?
+              <Button onClick={()=>setShowRename(true)} variant="secondary">Rename Project</Button>:
+              <></>
+              }
               <Link href="/projects"><a className="btn btn-secondary">Back to Project List</a></Link>
             </ButtonGroup>
           </div>
@@ -510,6 +540,25 @@ export default function Home() {
               </Button>
               <Button variant="primary" onClick={addUser}>
                 Add User
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Rename Project Modal */}
+          <Modal show={showRename} onHide={()=>setShowRename(false)}>
+            <Modal.Header>
+              <Modal.Title>Rename Project</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <label className="form-label">New Project Name</label>
+              <input className="form-control" type="text" onChange={e=>setRename(e.target.value)}/>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={()=>setShowRename(false)}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={renameProject}>
+                Rename Project
               </Button>
             </Modal.Footer>
           </Modal>

@@ -7,6 +7,8 @@ import Button from 'react-bootstrap/Button';
 import Nav from "react-bootstrap/Nav"
 import Link from 'next/link';
 
+import {format, formatDistance} from "date-fns"
+
 export default function Home() {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(true)
@@ -72,7 +74,7 @@ export default function Home() {
 
       <main>
         <div className="container">
-          <Nav variant="pills" defaultActiveKey="/projects">
+          <Nav variant="pills" className="justify-content-center" defaultActiveKey="/projects">
             <Nav.Item>
               <Nav.Link href="/projects">Projects</Nav.Link>
             </Nav.Item>
@@ -97,7 +99,7 @@ export default function Home() {
                 <th>Project ID</th>
                 <th>Project Name</th>
                 <th>User(s)</th>
-                <th>Created At</th>
+                <th>Created</th>
               </tr>
             </thead>
             <tbody>
@@ -107,7 +109,7 @@ export default function Home() {
                   <td>{project.projectId}</td>
                   <td><Link href={`/projects/${project.projectId}`}><a>{project.name}</a></Link></td>
                   <td>{project?.users.map(({user})=>(<><span style={{textDecoration: "underline"}} key={user.userId}>{user.displayName}</span>&nbsp;</>))}</td>
-                  <td>{project.createdAt.toString()}</td>
+                  <td>{formatDistance(new Date(project.createdAt), new Date(), {addSuffix: true})} ({format(new Date(project.createdAt),"dd/MM/yyyy")})</td>
                 </tr>
               ))}            
             </tbody>
