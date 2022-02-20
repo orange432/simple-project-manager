@@ -13,6 +13,7 @@ export default function Home() {
   const [projects, setProjects] = useState([]);
   const [userId, setUserId] = useState<number>()
   const [name, setName] = useState("")
+  const [inviteCount, setInviteCount] = useState<number>()
 
   useEffect(()=>{
     getProjects()
@@ -26,12 +27,14 @@ export default function Home() {
       if(data?.code == 1) return window.location.href = "/login"
       if(data.success){
         setProjects(data.projects)
+        setInviteCount(data.inviteCount)
         setUserId(data.userId)
       }else{
         toast.error(data.error);
       }
       setLoading(false)
     })
+    .catch(err=>toast.error(err))
   }
 
   const createProject = () => {
@@ -69,21 +72,21 @@ export default function Home() {
 
       <main>
         <div className="container">
-          <Nav>
+          <Nav variant="pills" defaultActiveKey="/projects">
             <Nav.Item>
-              <Link href="/projects">
-                <Nav.Link active>Projects</Nav.Link>
-              </Link>
+              <Nav.Link href="/projects">Projects</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Link href="/invitations">
-                <Nav.Link>Invitations</Nav.Link>
-              </Link>
+                <Nav.Link href="/invitations">Invitations{(inviteCount)?` (${inviteCount})`:''}</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Link href="/settings">
-                <Nav.Link>Settings</Nav.Link>
-              </Link>
+              <Nav.Link href="/tasks">Tasks</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+                <Nav.Link href="/settings">Settings</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link href="/logout">Logout</Nav.Link>
             </Nav.Item>
           </Nav>
           <h1>Projects</h1>
@@ -93,7 +96,7 @@ export default function Home() {
               <tr>
                 <th>Project ID</th>
                 <th>Project Name</th>
-                <th>Users</th>
+                <th>User(s)</th>
                 <th>Created At</th>
               </tr>
             </thead>
@@ -103,7 +106,7 @@ export default function Home() {
                 <tr key={project.projectId}>
                   <td>{project.projectId}</td>
                   <td><Link href={`/projects/${project.projectId}`}><a>{project.name}</a></Link></td>
-                  <td>{project?.users.map(({user})=>(<span>{user.displayName}  </span>))}</td>
+                  <td>{project?.users.map(({user})=>(<><span style={{textDecoration: "underline"}} key={user.userId}>{user.displayName}</span>&nbsp;</>))}</td>
                   <td>{project.createdAt.toString()}</td>
                 </tr>
               ))}            

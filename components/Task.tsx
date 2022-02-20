@@ -10,7 +10,8 @@ interface Props {
   task: {
     taskId: number,
     users: any,
-    title: string
+    title: string,
+    comments: any
   }
   userId: number
 }
@@ -32,6 +33,12 @@ const Task: React.FC<Props> = (props) => {
           <p className="text-center">You are assigned to this task</p>:
           <></>
         }
+        {(props.task.comments.length===0)?<p>No comments.</p>:
+        <p>{(props.task.comments.length===1)?
+          `${props.task.comments.length} comment.`:
+          `${props.task.comments.length} comments.`
+          }
+        </p>}
       </Card.Body>
     </Card>
   )

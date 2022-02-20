@@ -52,7 +52,7 @@ export default function Register() {
           <h2>Register</h2>
           <form onSubmit={handleSubmit}>
             <label className="form-label">Username</label>
-            <input type="text" className="form-control" onChange={e=>setUsername(e.target.value)}/>
+            <input type="text" className="form-control" minLength={4} title="Username must be at least 4 characters" onChange={e=>setUsername(e.target.value)}/>
             <label className="form-label">Email</label>
             <input type="email" className="form-control" onChange={e=>setEmail(e.target.value)}/>
             <label className="form-label">Display Name</label>

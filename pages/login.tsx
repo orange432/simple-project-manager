@@ -31,6 +31,8 @@ export default function Login() {
         setLoading(false)
       }
     })
+    .catch(err=>toast.error(err))
+
   }
 
   if(loading) return <Loading/>

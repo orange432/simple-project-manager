@@ -13,14 +13,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.json({success: false, error: "Invalid Token, please log in", code: 1})
   }
   try{
-    let projects = await prisma.projectUsers.findMany({
+    let tasks = await prisma.user.findUnique({
       where: {userId: decoded.userId},
       include: {
-        project: {
+        tasks: {
           include: {
-            users: {
+            task: {
               include: {
-                user: {select: {displayName: true}}
+                users: {
+                  include: {user: true}
+                },
+                project:{
+                  select: {
+                    name: true,
+                    projectId: true
+                  }
+                }
               }
             }
           }
@@ -32,7 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let inviteCount = await prisma.invitation.count({
       where: {userId: decoded.userId}
     })
-    res.json({projects, success: true, inviteCount})
+    res.json({tasks, success: true, inviteCount})
   }catch(err){
     console.log(err);
     res.json({success:false, error: "Database error.  Please refresh the page."})

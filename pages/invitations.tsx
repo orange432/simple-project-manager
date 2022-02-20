@@ -2,18 +2,14 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import Loading from '../components/Loading';
-import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button';
 import Table from "react-bootstrap/Table"
 import Nav from "react-bootstrap/Nav"
-import Link from 'next/link';
 
 export default function Home() {
-  const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(true)
   const [invitations, setInvitations] = useState([]);
   const [userId, setUserId] = useState<number>()
-  const [name, setName] = useState("")
 
   useEffect(()=>{
     getInvitations()
@@ -35,12 +31,50 @@ export default function Home() {
     })
   }
 
+  // acceptInvite accepts an invitation
   const acceptInvite = (inviteId: number) => {
     setLoading(true)
+    fetch("/api/accept-invite",{
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({inviteId})
+    })
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.success){
+        toast.success("Invite Accepted.")
+        getInvitations()
+      }else{
+        toast.error(data.error)
+        setLoading(false)
+      }
+    })
   }
 
+  // declineInvite declines an invitation
   const declineInvite = (inviteId: number) => {
     setLoading(true)
+    fetch("/api/decline-invite",{
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({inviteId})
+    })
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.success){
+        toast.success("Invite declined.")
+        getInvitations()
+      }else{
+        toast.error(data.error)
+        setLoading(false)
+      }
+    })
   }
 
   if (loading) return <Loading/>;
@@ -55,30 +89,33 @@ export default function Home() {
 
       <main>
         <div className="container">
-          <Nav>
+        <Nav variant="pills" defaultActiveKey="/invitations">
             <Nav.Item>
-              <Link href="/projects">
-                <Nav.Link>Projects</Nav.Link>
-              </Link>
+              <Nav.Link href="/projects">Projects</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Link href="/invitations">
-                <Nav.Link active>Invitations</Nav.Link>
-              </Link>
+              <Nav.Link href="/tasks">Tasks</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Link href="/settings">
-                <Nav.Link>Settings</Nav.Link>
-              </Link>
+                <Nav.Link href="/invitations">Invitations</Nav.Link>
+            </Nav.Item>
+            
+            <Nav.Item>
+                <Nav.Link href="/settings">Settings</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link href="/logout">Logout</Nav.Link>
             </Nav.Item>
           </Nav>
           <h1>Invitations</h1>
           <Table>
             <thead>
+              <tr>
               <th>Project Name</th>
               <th>Invited By</th>
               <th>Sent At</th>
               <th>Controls</th>
+              </tr>
             </thead>
             <tbody>
               {(invitations.length===0)?

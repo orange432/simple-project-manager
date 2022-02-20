@@ -119,7 +119,25 @@ export default function Home() {
   }
 
   const unBlockUser = (username: string) => {
-
+    setLoading(true)
+    fetch("/api/settings/unblock-user",{
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({username})
+    })
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.success){
+        toast.success("User successfully unblocked!")
+        getSettings();
+      }else{
+        toast.error(data.error)
+        setLoading(false)
+      }
+    })
   }
 
   if (loading) return <Loading/>;
@@ -134,21 +152,22 @@ export default function Home() {
 
       <main>
         <div className="container">
-          <Nav>
+        <Nav variant="pills" defaultActiveKey="/settings">
             <Nav.Item>
-              <Link href="/projects">
-                <Nav.Link>Projects</Nav.Link>
-              </Link>
+              <Nav.Link href="/projects">Projects</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Link href="/invitations">
-                <Nav.Link>Invitations</Nav.Link>
-              </Link>
+              <Nav.Link href="/tasks">Tasks</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Link href="/settings">
-                <Nav.Link active>Settings</Nav.Link>
-              </Link>
+                <Nav.Link href="/invitations">Invitations</Nav.Link>
+            </Nav.Item>
+            
+            <Nav.Item>
+                <Nav.Link href="/settings">Settings</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link href="/logout">Logout</Nav.Link>
             </Nav.Item>
           </Nav>
           <h1>Settings</h1>
@@ -173,7 +192,7 @@ export default function Home() {
 
         <Form onSubmit={changeDisplayName}>
           <h4>Change Display Name</h4>
-          <Form.Group>
+          <Form.Group className="mb-3">
             <Form.Label>New Display Name</Form.Label>
             <Form.Control type="text" required onChange={e=>setDisplayName(e.target.value)}/>
           </Form.Group>
@@ -182,7 +201,7 @@ export default function Home() {
         <h3>Blocked Users</h3>
         <p>Users blocked from inviting you</p>
         <Form onSubmit={blockUser}>
-        <Form.Group>
+        <Form.Group className="mb-3">
             <Form.Label>Username</Form.Label>
             <Form.Control type="text" required onChange={e=>setBlockedUser(e.target.value)}/>
           </Form.Group>
@@ -190,10 +209,10 @@ export default function Home() {
         </Form>
         <Table>
           <thead>
-            <th>
-              <td>Username</td>
-              <td>Controls</td>
-            </th>
+            <tr>
+              <th>Username</th>
+              <th>Controls</th>
+            </tr>
           </thead>
           <tbody>
           {(blockList.length===0)?

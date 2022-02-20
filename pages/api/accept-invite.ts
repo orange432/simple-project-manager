@@ -39,6 +39,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       userId: invitation.userId,
       projectId: invitation.projectId
     }})
+
+    // Delete invitation
+    await prisma.invitation.delete({where: {inviteId}})
  
     res.json({success: true})
   }catch(err){

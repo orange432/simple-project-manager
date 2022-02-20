@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const {username, password, email, displayName} = req.body;
   if(!username || !password || !email || !displayName) return res.json({success: false,error: "Missing fields!"})
+  if(username.length<4) return res.json({success: false, error: "Username must be at least 4 characters long"})
   // Check Email
   if(!/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)){
     return res.json({success: false, error: "Invalid email!"})

@@ -214,7 +214,25 @@ export default function Home() {
   }
 
   const addUser = () => {
-
+    const { id } = router.query
+    setLoading(true);
+    fetch("/api/invite-user",{
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({projectId: +id,username})
+    })
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.success){
+        toast.success("User successfully invited!")
+      }else{
+        toast.error(data.error)
+      }
+      setLoading(false)
+    })
   }
 
   useEffect(()=>{
