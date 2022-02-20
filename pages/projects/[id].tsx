@@ -266,6 +266,31 @@ export default function Home() {
     })
   }
 
+  const deleteTask = () => {
+    setLoading(true);
+    fetch("/api/delete-task",{
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({taskId: currentTaskId})
+    })
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.success){
+        toast.success("Task Deleted!")
+        setEditor(false)
+        loadProject()
+      }else{
+        toast.error(data.error)
+        setLoading(false)
+      }
+    })
+  }
+
+
+
   useEffect(()=>{
     if(router.isReady){
       loadProject()
@@ -287,7 +312,10 @@ export default function Home() {
         </thead>
         <tbody>
           {tasks.map((task)=>(
-            <tr key={task.taskId}>
+            <tr 
+            key={task.taskId}
+            className={(task.status===1)?"table-light":(task.status===2)?"table-info":(task.status===3)?"table-warning":"table-success"}
+            >
               <td>{task.title}</td>
               <td>
                 {(task.status===1)?
@@ -527,6 +555,7 @@ export default function Home() {
               </form>
             </Modal.Body>
             <Modal.Footer>
+            {(userId===project.ownerId)?<Button variant="danger" onClick={()=>deleteTask()}>Delete Task</Button>:<></>}
             <Button variant="secondary" onClick={()=>setEditor(false)}>
               Close
             </Button>
