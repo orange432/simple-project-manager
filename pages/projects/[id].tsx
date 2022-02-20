@@ -11,11 +11,13 @@ import Form from 'react-bootstrap/Form'
 import Card from 'react-bootstrap/Card'
 import Alert from "react-bootstrap/Alert"
 import Task from '../../components/Task'
+import { Table } from 'react-bootstrap'
 
 export default function Home() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [project, setProject] = useState<any>({})
+  const [tasks, setTasks] = useState([])
   const [userId, setUserId] = useState<number>()
   const [displayName, setDisplayName] = useState("")
   const [myUsername, setMyUsername] = useState("")
@@ -48,6 +50,8 @@ export default function Home() {
 
   const [showRename, setShowRename] = useState(false)
   const [rename, setRename] = useState("")
+
+  const [tableView, setTableView] = useState(false)
   useEffect(()=>{ 
     refreshComments(currentTaskId)
   },[project.tasks])
@@ -94,6 +98,7 @@ export default function Home() {
     .then(data=>{
       if(data.success){
         setProject(data.project)
+        setTasks(data.project.tasks)
         setNotStarted(data.project.tasks.filter((task)=>(task.status===1)))
         setInProgress(data.project.tasks.filter((task)=>(task.status===2)))
         setTesting(data.project.tasks.filter((task)=>(task.status===3)
@@ -267,6 +272,106 @@ export default function Home() {
     }
   },[router.isReady])
 
+  let content;
+  if(tableView){
+    content = (
+      <Table>
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Status</th>
+            <th>Assigned?</th>
+            <th>Comment(s)</th>
+            <th>Controls</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tasks.map((task)=>(
+            <tr key={task.taskId}>
+              <td>{task.title}</td>
+              <td>
+                {(task.status===1)?
+                'Not Started'
+                :(task.status===2)?
+                'In Progress'
+                :(task.status===3)?
+                'Testing':'Complete'  
+              }
+              </td>
+              <td>{(task.users.find(({user})=>user.userId===userId))?"Yes":"No"}</td>
+              <td>{task.comments.length}</td>
+              <td>
+                <ButtonGroup>
+                  <Button onClick={()=>openComments(task.taskId)} variant="primary">View Comments</Button>
+                  <Button onClick={()=>openEditor(task.taskId)} variant="primary">Edit</Button>
+                </ButtonGroup>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    )
+  }else{
+    content = (<div className="row">
+    <div className="col-md-3">
+      <h2 className="text-center">Not Started</h2>
+      {(notStarted.length===0)?<p className="text-center">No tasks in this category</p>:
+      notStarted.map((task)=>(
+        <Task
+          variant="light"
+          key={task.taskId}
+          task={task}
+          openComments={()=>openComments(task.taskId)}
+          openEditor={()=>openEditor(task.taskId)}
+          userId={userId}
+        />
+      ))}
+    </div>
+    <div className="col-md-3">
+      <h2 className="text-center">In Progress</h2>
+      {(inProgress.length===0)?<p className="text-center">No tasks in this category.</p>:
+      inProgress.map((task)=>(
+        <Task
+          variant="info"
+          key={task.taskId}
+          task={task}
+          openComments={()=>openComments(task.taskId)}
+          openEditor={()=>openEditor(task.taskId)}
+          userId={userId}
+        />
+      ))}
+    </div>
+    <div className="col-md-3">
+      <h2 className="text-center">Testing</h2>
+      {(testing.length===0)?<p className="text-center">No tasks in this category.</p>:
+      testing.map(task=>(
+        <Task
+          variant="warning"
+          key={task.taskId}
+          task={task}
+          openComments={()=>openComments(task.taskId)}
+          openEditor={()=>openEditor(task.taskId)}
+          userId={userId}
+        />
+      ))}
+    </div>
+    <div className="col-md-3">
+      <h2 className="text-center">Complete</h2>
+      {(complete.length===0)?<p className="text-center">No tasks in this category.</p>:
+      complete.map(task=>(
+        <Task
+          variant="success"
+          key={task.taskId}
+          task={task}
+          openComments={()=>openComments(task.taskId)}
+          openEditor={()=>openEditor(task.taskId)}
+          userId={userId}
+        />
+      ))}
+    </div>
+  </div>)
+  }
+
   if(loading) return <Loading/>
   return (
     <div>
@@ -282,75 +387,17 @@ export default function Home() {
           <div className="text-center">
             <ButtonGroup>
               <Button onClick={()=>setShow(true)}  variant="secondary">New Task</Button>
-              <Button onClick={()=>loadProject()} variant="secondary">Refresh</Button>
+              <Button onClick={()=>setTableView(!tableView)} variant="secondary">{(tableView)?'Switch to Board':'Switch to Table'}</Button>
               <Button onClick={()=>setShowAddUser(true)} variant="secondary">Invite User</Button>
               {(userId===project.ownerId)?
               <Button onClick={()=>setShowRename(true)} variant="secondary">Rename Project</Button>:
               <></>
               }
+              <Button onClick={()=>loadProject()} variant="secondary">Refresh</Button>
               <Link href="/projects"><a className="btn btn-secondary">Back to Project List</a></Link>
             </ButtonGroup>
           </div>
-          
-          
-          <div className="row">
-            <div className="col-md-3">
-              <h2 className="text-center">Not Started</h2>
-              {(notStarted.length===0)?<p className="text-center">No tasks in this category</p>:
-              notStarted.map((task)=>(
-                <Task
-                  variant="light"
-                  key={task.taskId}
-                  task={task}
-                  openComments={()=>openComments(task.taskId)}
-                  openEditor={()=>openEditor(task.taskId)}
-                  userId={userId}
-                />
-              ))}
-            </div>
-            <div className="col-md-3">
-              <h2 className="text-center">In Progress</h2>
-              {(inProgress.length===0)?<p className="text-center">No tasks in this category.</p>:
-              inProgress.map((task)=>(
-                <Task
-                  variant="info"
-                  key={task.taskId}
-                  task={task}
-                  openComments={()=>openComments(task.taskId)}
-                  openEditor={()=>openEditor(task.taskId)}
-                  userId={userId}
-                />
-              ))}
-            </div>
-            <div className="col-md-3">
-              <h2 className="text-center">Testing</h2>
-              {(testing.length===0)?<p className="text-center">No tasks in this category.</p>:
-              testing.map(task=>(
-                <Task
-                  variant="warning"
-                  key={task.taskId}
-                  task={task}
-                  openComments={()=>openComments(task.taskId)}
-                  openEditor={()=>openEditor(task.taskId)}
-                  userId={userId}
-                />
-              ))}
-            </div>
-            <div className="col-md-3">
-              <h2 className="text-center">Complete</h2>
-              {(complete.length===0)?<p className="text-center">No tasks in this category.</p>:
-              complete.map(task=>(
-                <Task
-                  variant="success"
-                  key={task.taskId}
-                  task={task}
-                  openComments={()=>openComments(task.taskId)}
-                  openEditor={()=>openEditor(task.taskId)}
-                  userId={userId}
-                />
-              ))}
-            </div>
-          </div>
+          {content}
         </div>
       </main>
       <Modal show={show} onHide={()=>setShow(false)}>
