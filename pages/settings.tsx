@@ -7,6 +7,7 @@ import Form from "react-bootstrap/Form"
 import Button from 'react-bootstrap/Button';
 import Nav from "react-bootstrap/Nav"
 import Link from 'next/link';
+import { Table } from 'react-bootstrap';
 
 type User = {
   userId: number,
@@ -18,6 +19,7 @@ export default function Home() {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(true)
   const [blockList, setBlocklist] = useState([]);
+  const [blockedUser, setBlockedUser] = useState("")
   const [user, setUser] = useState<User>()
 
   const [currentPassword, setCurrentPassword] = useState("")
@@ -92,6 +94,33 @@ export default function Home() {
     })
   }
 
+  // blocks the specified user from inviting
+  const blockUser = (event: FormEvent) => {
+    event.preventDefault()
+    setLoading(true)
+    fetch("/api/settings/block-user",{
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({username: blockedUser})
+    })
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.success){
+        toast.success("User successfully blocked!")
+        getSettings();
+      }else{
+        toast.error(data.error)
+        setLoading(false)
+      }
+    })
+  }
+
+  const unBlockUser = (username: string) => {
+
+  }
 
   if (loading) return <Loading/>;
   
@@ -150,6 +179,36 @@ export default function Home() {
           </Form.Group>
           <Button type="submit" variant="primary">Update Display Name</Button>
         </Form>
+        <h3>Blocked Users</h3>
+        <p>Users blocked from inviting you</p>
+        <Form onSubmit={blockUser}>
+        <Form.Group>
+            <Form.Label>Username</Form.Label>
+            <Form.Control type="text" required onChange={e=>setBlockedUser(e.target.value)}/>
+          </Form.Group>
+          <Button type="submit" variant="primary">Block User</Button>
+        </Form>
+        <Table>
+          <thead>
+            <th>
+              <td>Username</td>
+              <td>Controls</td>
+            </th>
+          </thead>
+          <tbody>
+          {(blockList.length===0)?
+            <tr><td colSpan={2}>No blocked users.</td></tr>
+            :
+            blockList.map((block)=>(
+              <tr key={block.username}>
+                <td>{block.username}</td>
+                <td><Button type="button" variant="secondary" onClick={()=>unBlockUser(block.username)}>Unblock</Button></td>
+              </tr>
+            ))
+          }
+          </tbody>
+        </Table>
+
         </div>
       </main>
     </div>
