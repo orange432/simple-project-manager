@@ -10,6 +10,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try{
     let project = await prisma.project.create({data: {
       name,
+      ownerId: user.userId
     }})
     await prisma.projectUsers.create({data: {
       userId: user.userId,

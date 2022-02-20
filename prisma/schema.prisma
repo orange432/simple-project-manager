@@ -17,6 +17,7 @@ model User {
   displayName String
   password String
   projects ProjectUsers[]
+  ownedProjects Project[]
   tasks TaskUsers[]
   comments TaskComments[]
   invitations Invitation[] @relation(name: "invitedUser")
@@ -30,12 +31,15 @@ model ProjectUsers{
   projectId Int
   project Project @relation(fields: [projectId], references: [projectId])
   @@id([userId,projectId])
+  permissions Int @default(1)
 }
 
 model Project {
   projectId Int @id @default(autoincrement())
   name String
   createdAt DateTime @default(now())
+  ownerId Int
+  owner User @relation(fields: [ownerId], references: [userId])
   users ProjectUsers[]
   tasks Task[]
   invitations Invitation[]

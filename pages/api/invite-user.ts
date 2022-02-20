@@ -36,6 +36,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }})
     if(isBlocked) return res.json({success: false, error: "You cannot invite this user."})
 
+    // Check that user isn't already part of the project
+    let alreadyInProject = await prisma.projectUsers.findFirst({where: {AND: [
+      {userId: invitedUser.userId},
+      {projectId}
+    ]}})
+    if (alreadyInProject) return res.json({success: false, error: "User is already in this project."})
+
     // Everything OK, Create invitation
     await prisma.invitation.create({data: {
       userId: invitedUser.userId,

@@ -4,12 +4,14 @@ import { toast } from 'react-toastify';
 import Loading from '../../components/Loading';
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button';
+import Nav from "react-bootstrap/Nav"
 import Link from 'next/link';
 
 export default function Home() {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(true)
   const [projects, setProjects] = useState([]);
+  const [userId, setUserId] = useState<number>()
   const [name, setName] = useState("")
 
   useEffect(()=>{
@@ -24,6 +26,7 @@ export default function Home() {
       if(data?.code == 1) return window.location.href = "/login"
       if(data.success){
         setProjects(data.projects)
+        setUserId(data.userId)
       }else{
         toast.error(data.error);
       }
@@ -66,8 +69,25 @@ export default function Home() {
 
       <main>
         <div className="container">
+          <Nav>
+            <Nav.Item>
+              <Link href="/projects">
+                <Nav.Link active>Projects</Nav.Link>
+              </Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Link href="/invitations">
+                <Nav.Link>Invitations</Nav.Link>
+              </Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Link href="/settings">
+                <Nav.Link>Settings</Nav.Link>
+              </Link>
+            </Nav.Item>
+          </Nav>
           <h1>Projects</h1>
-          <button type="button" className="btn btn-primary" onClick={()=>setShow(true)}>Create Project</button>
+          <Button type="button" variant="primary" onClick={()=>setShow(true)}>Create Project</Button>
           <table className="table">
             <thead>
               <tr>
