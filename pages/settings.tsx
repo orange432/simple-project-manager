@@ -28,6 +28,8 @@ export default function Home() {
 
   const [displayName, setDisplayName] = useState("")
 
+  const [messageCount,setMessageCount] = useState(0)
+
   useEffect(()=>{
     getSettings()
   },[])
@@ -40,6 +42,7 @@ export default function Home() {
       if(data?.code == 1) return window.location.href = "/login"
       if(data.success){
         setBlocklist(data.blocklist)
+        setMessageCount(data.messageCount)
         setUser(data.user)
       }else{
         toast.error(data.error);
@@ -162,7 +165,9 @@ export default function Home() {
             <Nav.Item>
                 <Nav.Link href="/invitations">Invitations</Nav.Link>
             </Nav.Item>
-            
+            <Nav.Item>
+                <Nav.Link href="/messages">Messages{(messageCount)?` (${messageCount})`:''}</Nav.Link>
+            </Nav.Item>
             <Nav.Item>
                 <Nav.Link href="/settings">Settings</Nav.Link>
             </Nav.Item>
@@ -199,7 +204,7 @@ export default function Home() {
           <Button type="submit" variant="primary">Update Display Name</Button>
         </Form>
         <h4 className="mt-4">Blocked Users</h4>
-        <p>Users blocked from inviting you</p>
+        <p>Users blocked from messaging and inviting you</p>
         <Form onSubmit={blockUser}>
         <Form.Group className="mb-3">
             <Form.Label>Username</Form.Label>

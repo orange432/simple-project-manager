@@ -10,6 +10,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [invitations, setInvitations] = useState([]);
   const [userId, setUserId] = useState<number>()
+  const [messageCount, setMessageCount] = useState(0)
 
   useEffect(()=>{
     getInvitations()
@@ -23,6 +24,7 @@ export default function Home() {
       if(data?.code == 1) return window.location.href = "/login"
       if(data.success){
         setInvitations(data.invitations)
+        setMessageCount(data.messageCount)
         setUserId(data.userId)
       }else{
         toast.error(data.error);
@@ -99,7 +101,9 @@ export default function Home() {
             <Nav.Item>
                 <Nav.Link href="/invitations">Invitations</Nav.Link>
             </Nav.Item>
-            
+            <Nav.Item>
+                <Nav.Link href="/messages">Messages{(messageCount)?` (${messageCount})`:''}</Nav.Link>
+            </Nav.Item>
             <Nav.Item>
                 <Nav.Link href="/settings">Settings</Nav.Link>
             </Nav.Item>

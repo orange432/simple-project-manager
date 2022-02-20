@@ -3,8 +3,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken"
 import cookie from 'cookie'
 
-// Loads a list of projects
+// Deletes a message
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  const {messageId} = req.body
   const token = cookie.parse(req.headers.cookie || "").jwt
   let decoded;
   try{
@@ -13,31 +14,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.json({success: false, error: "Invalid Token, please log in", code: 1})
   }
   try{
-    let invitations = await prisma.invitation.findMany({
-      where: { userId: decoded.userId },
-      include: {
-        invitedBy: {
-          select: {
-            username: true,
-            displayName: true
-          }
-        },
-        project: {
-          select: {
-            name: true
-          }
-        }
-      }
-    })
-    let messageCount = await prisma.message.count({
+    // Check user is correct
+    let message = await prisma.message.findFirst({
       where: {
         AND: [
-          {receiverId: decoded.userId},
-          {markAsRead: false}
+          {messageId},
+          {receiverId: decoded.userId}
         ]
       }
     })
-    res.json({invitations,userId: decoded.userId, success: true, messageCount})
+    if(!message) res.json({success: false, error: "Invalid message."})
+    
+    // Everything ok, delete message
+    await prisma.message.delete({
+      where: {messageId}
+    })
+    
+    res.json({success: true})
   }catch(err){
     console.log(err);
     res.json({success:false, error: "Database error.  Please refresh the page."})

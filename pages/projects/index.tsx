@@ -15,6 +15,8 @@ export default function Home() {
   const [projects, setProjects] = useState([]);
   const [userId, setUserId] = useState<number>()
   const [name, setName] = useState("")
+  
+  const [messageCount, setMessageCount] = useState(0)
   const [inviteCount, setInviteCount] = useState<number>()
 
   useEffect(()=>{
@@ -30,6 +32,7 @@ export default function Home() {
       if(data.success){
         setProjects(data.projects)
         setInviteCount(data.inviteCount)
+        setMessageCount(data.messageCount)
         setUserId(data.userId)
       }else{
         toast.error(data.error);
@@ -83,6 +86,9 @@ export default function Home() {
             </Nav.Item>
             <Nav.Item>
               <Nav.Link href="/tasks">Tasks</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+                <Nav.Link href="/messages">Messages{(messageCount)?` (${messageCount})`:''}</Nav.Link>
             </Nav.Item>
             <Nav.Item>
                 <Nav.Link href="/settings">Settings</Nav.Link>

@@ -2,6 +2,7 @@ import { prisma } from "../../../prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken"
 import cookie from 'cookie'
+import { PrismaClient } from "@prisma/client";
 
 // Loads a list of projects
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -32,7 +33,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let inviteCount = await prisma.invitation.count({
       where: {userId: decoded.userId}
     })
-    res.json({projects, success: true, inviteCount})
+
+    let messageCount = await prisma.message.count({
+      where: {
+        AND: [
+          {receiverId: decoded.userId},
+          {markAsRead: false}
+        ]
+        
+      }
+    })
+    res.json({projects, success: true, inviteCount, messageCount})
   }catch(err){
     console.log(err);
     res.json({success:false, error: "Database error.  Please refresh the page."})

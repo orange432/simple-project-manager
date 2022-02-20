@@ -40,7 +40,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let inviteCount = await prisma.invitation.count({
       where: {userId: decoded.userId}
     })
-    res.json({tasks, success: true, inviteCount})
+    let messageCount = await prisma.message.count({
+      where: {
+        AND: [
+          {receiverId: decoded.userId},
+          {markAsRead: false}
+        ]
+      }
+    })
+    res.json({tasks, success: true, inviteCount, messageCount})
   }catch(err){
     console.log(err);
     res.json({success:false, error: "Database error.  Please refresh the page."})

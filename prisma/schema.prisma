@@ -23,6 +23,8 @@ model User {
   invitations Invitation[] @relation(name: "invitedUser")
   invitesSent Invitation[] @relation(name: "invitingUser")
   blocklist InvitationBlocklist[]
+  sentMessages Message[] @relation(name: "sendingUser")
+  receivedMessages Message[] @relation(name: "receivingUser")
 }
 
 model ProjectUsers{
@@ -91,4 +93,15 @@ model InvitationBlocklist {
   user User @relation(fields: [userId],references: [userId])
   username String
   @@id([userId, username])
+}
+
+model Message {
+  messageId Int @id @default(autoincrement())
+  content String
+  senderId Int
+  sender User @relation(fields: [senderId],references: [userId], name: "sendingUser")
+  receiverId Int
+  receiver User @relation(fields: [receiverId],references: [userId], name: "receivingUser")
+  sentAt DateTime @default(now())
+  markAsRead Boolean @default(false)
 }
