@@ -174,7 +174,7 @@ export default function Home() {
       <Head>
         <title>Simple Project Manager</title>
         <meta name="description" content="A simple project management system" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
 
       <main>

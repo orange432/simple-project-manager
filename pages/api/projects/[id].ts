@@ -1,21 +1,15 @@
 import { prisma } from "../../../prisma";
 import { NextApiRequest, NextApiResponse } from "next";
-import jwt from "jsonwebtoken"
-import cookie from 'cookie'
+import { authorize } from "../../../controllers/sessions";
 
 // Loads project data from the project with the given id
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const token = cookie.parse(req.headers.cookie || "").jwt
-  let decoded;
-  try{
-    decoded = jwt.verify(token,process.env.JWT_SECRET) 
-  }catch(err){
-    return res.json({success: false, error: "Invalid Token, please log in", code: 1})
-  }
+  const [user, error]:any = await authorize(req,res)
+  if(error) return res.json({success: false, error, code: 1})
   const { id } = req.query
   try{
     let link = await prisma.projectUsers.findFirst({
-      where: {AND:[{userId: decoded.userId}, {projectId: +id}]}
+      where: {AND:[{userId: user.userId}, {projectId: +id}]}
     })
     if(!link) return res.json({success:false, error: "You are not part of this project."})
   }catch(err){
@@ -66,15 +60,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     })
 
-    // Load user data
-    let user = await prisma.user.findUnique({where: 
-      {userId: decoded.userId},
-      select: {
-        userId: true,
-        username: true,
-        displayName: true
-      }
-    })
     res.json({success: true, project,user})
   }catch(err){
     console.log(err)

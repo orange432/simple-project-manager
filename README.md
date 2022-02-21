@@ -15,6 +15,17 @@ JWT_SECRET="randomsecretstring"
 ```
 Replace the JWT_SECRET with a random secret string.
 
+Then run the command:
+```
+npm install
+```
+
+Then set up prisma with:
+```
+npx prisma db push
+```
+Now you should be ready to go.
+
 ## Possible Improvements
 - Use Reducers instead of useState hooks
 - WebSocket based messaging system

@@ -26,12 +26,13 @@ export default function Home() {
       <Head>
         <title>Simple Project Manager</title>
         <meta name="description" content="A simple project management system" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
 
       <main className={styles.main}>
         <div className="container text-center">
-          <h1>Simple Project Manager</h1>
+          <img src="/images/checklist.png" alt="" style={{maxHeight: 300}}/>
+          <h1 className="mt-2">Simple Project Manager</h1>
           <p>A simple, easy to use project management system.</p>
           <div className="text-center mb-3">
             <Link href="/login"><a className="btn btn-primary">Login</a></Link>

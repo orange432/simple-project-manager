@@ -8,7 +8,7 @@ const Loading = () => {
     <Head>
         <title>Simple Project Manager - Loading</title>
         <meta name="description" content="A simple project management system" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
     <div className={styles.center}>
       <div>Loading...</div>
